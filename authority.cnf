@@ -1,0 +1,74 @@
+[ ca ]
+default_ca      = CA_default            # The default ca section
+
+[ CA_default ]
+
+dir            = ./authority              # top dir
+
+database       = $dir/index.txt        # index file.
+serial         = $dir/serial           # serial no file
+
+certificate    = $dir/certs/ca.cert.pem # The CA cert
+private_key    = $dir/private/ca.key.pem # CA private key
+RANDFILE       = $dir/private/.rand    # random number file
+
+new_certs_dir  = $dir/newcerts         # new certs dir
+crl_dir	= $dir/crl
+
+default_days   = 3750                   # how long to certify for
+default_crl_days= 3650               # how long before next CRL
+default_md     = sha512                  # md to use
+
+policy         = policy            # default policy
+email_in_dn    = no                    # Don't add the email into cert DN
+preserve       = no
+
+name_opt       = ca_default            # Subject name display option
+cert_opt       = ca_default            # Certificate display option
+copy_extensions = none                 # Don't copy extensions from request
+
+[ policy ]
+commonName             = optional
+countryName            = optional
+emailAddress           = optional
+organizationName       = optional
+organizationalUnitName = optional
+stateOrProvinceName    = optional
+
+[ req ]
+prompt	= no
+distinguished_name	= req_distinguished_name
+string_mask	= utf8only
+default_md	= sha256
+
+[ req_distinguished_name ]
+countryName	= AY
+
+[ v3_ca ]
+authorityKeyIdentifier	= keyid:always,issuer
+basicConstraints	= critical,CA:TRUE,pathlen:1
+keyUsage		= critical,digitalSignature,cRLSign,keyCertSign
+subjectKeyIdentifier	= hash
+
+[ v3_intermediate_ca ]
+authorityKeyIdentifier	= keyid:always,issuer
+basicConstraints	= critical,CA:TRUE,pathlen:0
+keyUsage		= critical,digitalSignature,cRLSign,keyCertSign
+subjectKeyIdentifier	= hash
+
+[ v3_end_cert ]
+authorityKeyIdentifier	= keyid:always,issuer:always
+basicConstraints	= CA:FALSE
+extendedKeyUsage	= clientAuth,serverAuth
+keyUsage		= critical,digitalSignature,keyEncipherment
+subjectKeyIdentifier	= hash
+
+[ crl_ext ]
+authorityKeyIdentifier	= keyid:always
+
+[ ocsp ]
+authorityKeyIdentifier	= keyid:always,issuer:always
+basicConstraints	= CA:FALSE
+extendedKeyUsage	= critical,OCSPSigning
+keyUsage		= critical,digitalSignature
+subjectKeyIdentifier	= hash
